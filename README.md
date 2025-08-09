@@ -1,6 +1,6 @@
 Based on our collaboration on the star-counting app, I can help you fill out the project documentation template.
 
-Here is a completed version with all the technical details and screenshots from our conversation.
+Here is a developing version of it!
 
 -----
 
