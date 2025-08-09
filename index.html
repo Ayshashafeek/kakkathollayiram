@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Star Counting App</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-color: #1e1e1e;
+            --text-color: #e0e0e0;
+            --primary-color: #bb86fc;
+            --secondary-color: #03dac6;
+            --border-color: #333;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background-color: var(--card-color);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20px;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .sample-image-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .sample-image {
+            max-width: 100%;
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            margin-bottom: 10px;
+        }
+        
+        .sample-caption {
+            font-size: 14px;
+            color: #aaa;
+            margin-top: 5px;
+        }
+        
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .upload-area:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(187, 134, 252, 0.05);
+        }
+        
+        .upload-area.highlight {
+            border-color: var(--secondary-color);
+            background-color: rgba(3, 218, 198, 0.05);
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        #file-input {
+            display: none;
+        }
+        
+        .preview-container {
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+        
+        #image-preview {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        input[type="range"], input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            background-color: #2d2d2d;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            color: var(--text-color);
+        }
+        
+        input[type="range"] {
+            -webkit-appearance: none;
+            height: 8px;
+            background: #2d2d2d;
+            border-radius: 5px;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: #000;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #a370d7;
+        }
+        
+        button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #252525;
+            display: none;
+            text-align: center;
+        }
+        
+        .result h3 {
+            color: var(--secondary-color);
+            margin-top: 0;
+        }
+        
+        .star-count {
+            font-size: 24px;
+            font-weight: bold;
+            color: gold;
+            margin: 10px 0;
+        }
+        
+        .processing {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--secondary-color);
+        }
+        
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 14px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌟Kakkathollayiram</h1>
+        
+        <div class="sample-image-container">
+            <h3>where you to like this in your childhood?</h3>
+            <h3>Did you get mocked for this??WE GOT YOU!!</h3>
+            <!-- Replace this src with your actual image path -->
+            <img class="sample-image" src="kk.jpg" alt="Sample star image">
+            <p class="sample-caption">Upload an image like this to count the stars</p>
+        </div>
+        
+        <div class="upload-area" id="upload-area">
+            <div class="upload-icon">📁</div>
+            <h3>Drag & Drop your star image here</h3>
+            <p>or click to browse files</p>
+            <input type="file" id="file-input" accept="image/*">
+        </div>
+        
+        <div class="preview-container" id="preview-container">
+            <h3>Your Uploaded Image</h3>
+            <img id="image-preview" src="#" alt="Preview">
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="sensitivity">Detection Sensitivity</label>
+                <input type="range" id="sensitivity" min="1" max="100" value="50">
+                <input type="number" id="sensitivity-value" min="1" max="100" value="50">
+            </div>
+            
+            <div class="control-group">
+                <label for="min-size">Minimum Star Size (px)</label>
+                <input type="range" id="min-size" min="1" max="50" value="5">
+                <input type="number" id="min-size-value" min="1" max="50" value="5">
+            </div>
+        </div>
+        
+        <div class="processing" id="processing">
+            <p>Processing image... Please wait</p>
+            <div class="spinner">⏳</div>
+        </div>
+        
+        <button id="count-button" disabled>Count Stars</button>
+        
+        <div class="result" id="result">
+            <h3>Star Count Result</h3>
+            <div class="star-count">Stars detected: <span id="count">0</span></div>
+            <canvas id="result-canvas" style="display: none;"></canvas>
+        </div>
+    </div>
+    
+    <div class="footer">
+        Star Counting App &copy; 2023
+    </div>
+
+    <script>
+    // DOM elements
+    const uploadArea = document.getElementById('upload-area');
+    const fileInput = document.getElementById('file-input');
+    const previewContainer = document.getElementById('preview-container');
+    const imagePreview = document.getElementById('image-preview');
+    const countButton = document.getElementById('count-button');
+    const resultDiv = document.getElementById('result');
+    const countSpan = document.getElementById('count');
+    const processingDiv = document.getElementById('processing');
+    const sensitivitySlider = document.getElementById('sensitivity');
+    const sensitivityValue = document.getElementById('sensitivity-value');
+    const minSizeSlider = document.getElementById('min-size');
+    const minSizeValue = document.getElementById('min-size-value');
+    
+    let uploadedImageDataUrl = null;
+
+    // Sync slider and number inputs
+    sensitivitySlider.addEventListener('input', () => {
+        sensitivityValue.value = sensitivitySlider.value;
+    });
+    
+    sensitivityValue.addEventListener('input', () => {
+        sensitivitySlider.value = sensitivityValue.value;
+    });
+    
+    minSizeSlider.addEventListener('input', () => {
+        minSizeValue.value = minSizeSlider.value;
+    });
+    
+    minSizeValue.addEventListener('input', () => {
+        minSizeSlider.value = minSizeValue.value;
+    });
+    
+    // Handle file selection
+    uploadArea.addEventListener('click', () => {
+        fileInput.click();
+    });
+    
+    fileInput.addEventListener('change', handleFileSelect);
+    
+    // Handle drag and drop
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('highlight');
+    });
+    
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('highlight');
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('highlight');
+        
+        if (e.dataTransfer.files.length) {
+            fileInput.files = e.dataTransfer.files;
+            handleFileSelect();
+        }
+    });
+    
+    function handleFileSelect() {
+        const file = fileInput.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            imagePreview.src = e.target.result;
+            uploadedImageDataUrl = e.target.result; // Store the data URL
+            previewContainer.style.display = 'block';
+            countButton.disabled = false;
+        };
+        reader.readAsDataURL(file);
+    }
+    
+    // ====================================================================
+    // NEW: Colab Communication Functions
+    // ====================================================================
+
+    // This function sends data to Python when the button is clicked.
+    countButton.addEventListener('click', () => {
+        if (!uploadedImageDataUrl) return;
+        
+        // Show processing state
+        showProcessing();
+        countButton.disabled = true;
+        resultDiv.style.display = 'none';
+
+        // Get slider values
+        const sensitivity = parseInt(sensitivitySlider.value);
+        const minSize = parseInt(minSizeSlider.value);
+
+        // Call the Python function with image data and slider values
+        google.colab.kernel.invokeFunction(
+            'run_star_counter',             // The name of the Python function
+            [uploadedImageDataUrl, sensitivity, minSize] // The data to pass
+        );
+    });
+
+    // This function receives the final result from Python and updates the UI
+    function updateUIwithResult(count) {
+        hideProcessing();
+        countButton.disabled = false;
+        
+        countSpan.textContent = count;
+        resultDiv.style.display = 'block';
+    }
+
+    function showProcessing() {
+        processingDiv.style.display = 'block';
+    }
+
+    function hideProcessing() {
+        processingDiv.style.display = 'none';
+    }
+
+    // You can also add a function to handle errors from Python
+    function handleError(message) {
+      hideProcessing();
+      countButton.disabled = false;
+      alert("Error from Python: " + message);
+    }
+    
+</script>
+</body>
+</html>
